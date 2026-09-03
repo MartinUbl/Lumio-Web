@@ -1,0 +1,91 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = isset($event) && $event ? 'Upravit akci' : 'Nová akce'}
+
+{block content}
+	<div class="content" style="padding-top:40px;">
+		<a n:href="Dashboard:default" style="display:inline-flex; gap:6px; margin-bottom:12px;">&larr; Zpět na dashboard</a><br>
+		<a n:href="default" style="display:inline-flex; gap:6px; margin-bottom:32px;">&larr; Zpět na správu akcí</a>
+
+		<div class="section-label">Administrace</div>
+		<h2 class="section-title">{if isset($event) && $event}Upravit akci{else}Vytvořit akci{/if}</h2>
+		<p class="form-notice" style="max-width:720px; margin-bottom:24px;">
+			V administraci můžeš upravit obsah akce, připnout odborníka a spravovat přílohy. Uložená akce bude vždy schválená.
+		</p>
+
+		{form eventForm, class => 'form-card'}
+			<ul n:ifcontent class="errors">
+				<li n:foreach="$form->getErrors() as $error">{$error}</li>
+			</ul>
+
+			{input id}
+
+			<div class="form-group">
+				<label n:name="name">Název akce</label>
+				<input n:name="name">
+			</div>
+
+			<div class="form-group">
+				<label n:name="description">Popis akce</label>
+				<textarea n:name="description" rows="6"></textarea>
+			</div>
+
+			<div class="form-row">
+				<div class="form-group">
+					<label n:name="date">Datum a čas</label>
+					<input n:name="date">
+				</div>
+				<div class="form-group">
+					<label n:name="organiser">Organizátor</label>
+					<input n:name="organiser">
+				</div>
+			</div>
+
+			<div class="form-row">
+				<div class="form-group">
+					<label n:name="audienceRoles">Pro koho je akce určena</label>
+					<select n:name="audienceRoles"></select>
+				</div>
+				<div class="form-group">
+					<label n:name="categoryTag">Kategorie</label>
+					<select n:name="categoryTag"></select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label n:name="areaTags">Obory</label>
+				<select n:name="areaTags"></select>
+			</div>
+
+			<div class="form-group">
+				<label n:name="expertId">Připnutý odborník</label>
+				<select n:name="expertId"></select>
+			</div>
+
+			<div class="form-group">
+				<label n:name="attachment">Soubor k akci</label>
+				<input n:name="attachment" accept=".pdf,image/*">
+			</div>
+
+			{if $event && $event->filePath}
+				<div class="form-notice" style="margin-top:-6px;">
+					Aktuální soubor:
+					<a href="{$basePath}/uploads/{$event->filePath}" target="_blank" rel="noreferrer">otevřít přílohu</a>
+				</div>
+				<div class="form-group">
+					<label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px;">
+						<input n:name="removeAttachment" style="width:auto;">
+						Odebrat stávající soubor
+					</label>
+				</div>
+			{/if}
+
+			<p class="form-notice">Tip: podrž `Ctrl` nebo `Cmd`, pokud chceš vybrat více cílových skupin nebo oborů najednou.</p>
+
+			<div class="profile-form-actions">
+				<a n:href="default" class="btn-secondary">Zrušit</a>
+				{input send, class => 'btn-submit'}
+			</div>
+		{/form}
+	</div>
+{/block}

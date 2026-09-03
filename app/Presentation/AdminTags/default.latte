@@ -1,0 +1,149 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Správa tagů'}
+
+{block content}
+<div class="content" style="padding-top:40px;">
+    <a n:href="Dashboard:default" style="display:inline-flex; gap:6px; margin-bottom:32px;">&larr; Zpět na dashboard</a>
+
+    <div class="section-label">Administrace</div>
+    <h2 class="section-title">Správa tagů</h2>
+    <p class="form-notice">Tady můžeš spravovat obory a kategorie pro akce a obory pro odborníky. Použitý tag lze bezpečně deaktivovat, ale ne smazat.</p>
+
+    <div class="form-card" id="tag-form">
+        <h3>{if $editingTag instanceof App\Model\Entities\Tag}Upravit tag{else}Přidat nový tag{/if}</h3>
+        {if $editingTag instanceof App\Model\Entities\Tag}
+            <div class="admin-filter-actions" style="margin-bottom:16px;">
+                <a n:href="default" class="filter-reset">× Zrušit úpravu</a>
+            </div>
+        {/if}
+        {control tagForm}
+    </div>
+
+    <div class="divider"></div>
+
+    <section class="tag-admin-section">
+        <h3 class="tag-admin-title">Tagy pro akce</h3>
+        <div class="tag-admin-columns">
+            <div class="tag-admin-group">
+                <h4>Obory</h4>
+                <div class="tag-admin-list">
+                    {foreach $eventAreaTags as $tag}
+                        {var $usage = $tagUsage[$tag->id] ?? ['events' => 0, 'experts' => 0]}
+                        <article class="tag-admin-item">
+                            <div class="tag-admin-item-main">
+                                <div class="tag-admin-name-row">
+                                    <strong>{$tag->name}</strong>
+                                    {if $tag->scope === App\Model\Entities\Tag::SCOPE_BOTH}
+                                        <span class="tag-admin-badge">Sdílený</span>
+                                    {/if}
+                                    {if !$tag->isActive}
+                                        <span class="tag-admin-badge tag-admin-badge-muted">Neaktivní</span>
+                                    {/if}
+                                </div>
+                                <div class="tag-admin-meta">Použití v akcích: {$usage['events']}{if $usage['experts'] > 0} · použití u odborníků: {$usage['experts']}{/if}</div>
+                            </div>
+                            <div class="tag-admin-actions">
+                                <a n:href="default, editId => $tag->id" class="btn-secondary">Upravit</a>
+                                {if $tag->isActive}
+                                        <form method="post" action="{link deactivate! $tag->id}">
+                                            <input type="hidden" name="_token" value="{$adminActionToken}">
+                                            <button type="submit" class="btn-secondary" onclick="return confirm('Opravdu deaktivovat?')">Deaktivovat</button>
+                                        </form>
+                                {else}
+                                    <form method="post" action="{link activate! $tag->id}">
+                                        <input type="hidden" name="_token" value="{$adminActionToken}">
+                                        <button type="submit" class="btn-secondary" onclick="return confirm('Aktivovat?')">Aktivovat</button>
+                                    </form>
+                                {/if}
+                            </div>
+                        </article>
+                    {else}
+                        <div class="experts-empty visible">Zatím tu není žádný obor pro akce.</div>
+                    {/foreach}
+                </div>
+            </div>
+
+            <div class="tag-admin-group">
+                <h4>Kategorie</h4>
+                <div class="tag-admin-list">
+                    {foreach $eventCategoryTags as $tag}
+                        {var $usage = $tagUsage[$tag->id] ?? ['events' => 0, 'experts' => 0]}
+                        <article class="tag-admin-item">
+                            <div class="tag-admin-item-main">
+                                <div class="tag-admin-name-row">
+                                    <strong>{$tag->name}</strong>
+                                    {if !$tag->isActive}
+                                        <span class="tag-admin-badge tag-admin-badge-muted">Neaktivní</span>
+                                    {/if}
+                                </div>
+                                <div class="tag-admin-meta">Použití v akcích: {$usage['events']}</div>
+                            </div>
+                            <div class="tag-admin-actions">
+                                <a n:href="default, editId => $tag->id" class="btn-secondary">Upravit</a>
+                                {if $tag->isActive}
+                                        <form method="post" action="{link deactivate! $tag->id}">
+                                            <input type="hidden" name="_token" value="{$adminActionToken}">
+                                            <button type="submit" class="btn-secondary" onclick="return confirm('Opravdu deaktivovat?')">Deaktivovat</button>
+                                        </form>
+                                {else}
+                                    <form method="post" action="{link activate! $tag->id}">
+                                        <input type="hidden" name="_token" value="{$adminActionToken}">
+                                        <button type="submit" class="btn-secondary" onclick="return confirm('Aktivovat?')">Aktivovat</button>
+                                    </form>
+                                {/if}
+                            </div>
+                        </article>
+                    {else}
+                        <div class="experts-empty visible">Zatím tu není žádná kategorie akcí.</div>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="tag-admin-section">
+        <h3 class="tag-admin-title">Tagy pro odborníky</h3>
+        <div class="tag-admin-group">
+            <h4>Obory</h4>
+            <div class="tag-admin-list">
+                {foreach $expertAreaTags as $tag}
+                    {var $usage = $tagUsage[$tag->id] ?? ['events' => 0, 'experts' => 0]}
+                    <article class="tag-admin-item">
+                        <div class="tag-admin-item-main">
+                            <div class="tag-admin-name-row">
+                                <strong>{$tag->name}</strong>
+                                {if $tag->scope === App\Model\Entities\Tag::SCOPE_BOTH}
+                                    <span class="tag-admin-badge">Sdílený</span>
+                                {/if}
+                                {if !$tag->isActive}
+                                    <span class="tag-admin-badge tag-admin-badge-muted">Neaktivní</span>
+                                {/if}
+                            </div>
+                            <div class="tag-admin-meta">Použití u odborníků: {$usage['experts']}{if $usage['events'] > 0} · použití v akcích: {$usage['events']}{/if}</div>
+                        </div>
+                        <div class="tag-admin-actions">
+                            <a n:href="default, editId => $tag->id" class="btn-secondary">Upravit</a>
+                            {if $tag->isActive}
+                                    <form method="post" action="{link deactivate! $tag->id}">
+                                        <input type="hidden" name="_token" value="{$adminActionToken}">
+                                        <button type="submit" class="btn-secondary" onclick="return confirm('Opravdu deaktivovat?')">Deaktivovat</button>
+                                    </form>
+                            {else}
+                                <form method="post" action="{link activate! $tag->id}">
+                                    <input type="hidden" name="_token" value="{$adminActionToken}">
+                                    <button type="submit" class="btn-secondary" onclick="return confirm('Aktivovat?')">Aktivovat</button>
+                                </form>
+                            {/if}
+                        </div>
+                    </article>
+                {else}
+                    <div class="experts-empty visible">Zatím tu není žádný obor pro odborníky.</div>
+                {/foreach}
+            </div>
+        </div>
+    </section>
+</div>
+{/block}

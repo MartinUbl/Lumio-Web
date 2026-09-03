@@ -1,0 +1,42 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: lumio-database
+  labels:
+    app: lumio-database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lumio-database
+  serviceName: lumio-database
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: lumio-database
+    spec:
+      terminationGracePeriodSeconds: 10
+      imagePullSecrets:
+        - name: lumio-registry
+      containers:
+      - name: database
+        image: mariadb
+        ports:
+        - containerPort: 3306
+        envFrom:
+          - secretRef:
+              name: database
+        volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: database-volume
+  volumeClaimTemplates:
+  - metadata:
+      name: database-volume
+    spec:
+      accessModes: [ ReadWriteOnce ]
+      storageClassName: csi-rbd-synergia
+      resources:
+        requests:
+          storage: 5Gi

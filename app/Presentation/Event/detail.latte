@@ -1,0 +1,155 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = $event->name}
+
+{block content}
+	<div class="content" style="padding-top:40px;">
+		<a n:href="Event:default" style="display:inline-flex; gap:6px; margin-bottom:32px;">&larr; Všechny akce</a>
+
+		<div class="event-detail-layout">
+			<div class="event-detail-content">
+				<div class="event-detail-header">
+					{if $event->date}
+						<div class="event-detail-date-badge">
+							<div class="event-detail-date-day">{$event->date|date:'j'}</div>
+							<div class="event-detail-date-month">{$event->date|czechMonth|upper} {$event->date|date:'Y'}</div>
+							<div class="event-detail-date-time">{$event->date|date:'H:i'}</div>
+						</div>
+					{/if}
+
+					<div class="event-card-tags" style="margin-bottom:14px;">
+						{foreach $event->getPublicDisplayTags() as $tag}
+							<span class="event-tag tag-{$tag['type']}">{$tag['label']}</span>
+						{/foreach}
+					</div>
+
+					<h1 class="event-detail-title">{$event->name}</h1>
+					<p class="event-organiser" style="margin-top:0; margin-bottom:0;">
+						<span class="event-organiser-label" style="color:blue">Organizátor:</span>
+						<span>{$event->organiser}</span>
+					</p>
+				</div>
+
+				{if $event->imagePath}
+					<div style="margin-bottom:28px;">
+						<img src="{$basePath}/uploads/{$event->imagePath}" alt="{$event->name}" style="border-radius:16px; width:100%; max-height:420px; object-fit:cover;">
+					</div>
+				{/if}
+
+				<h3>O akci</h3>
+				<p>{$event->description}</p>
+
+				{if $linkedExpert}
+					<h3>Připnutý odborník</h3>
+					<p><strong>{$linkedExpert->name}</strong></p>
+				{/if}
+
+				{if $event->filePath}
+					<h3>Přílohy</h3>
+					{if $attachmentType === 'pdf'}
+						<div style="margin-bottom:16px;">
+							<iframe
+								src="{$basePath}/uploads/{$event->filePath}"
+								title="PDF příloha k akci {$event->name}"
+								style="width:100%; min-height:560px; border:1px solid #E2DDD6; border-radius:16px; background:#fff;"
+							></iframe>
+						</div>
+						<a href="{$basePath}/uploads/{$event->filePath}" target="_blank" rel="noreferrer" class="btn-secondary">Stáhnout PDF</a>
+					{elseif $attachmentType === 'image'}
+						<div style="margin-bottom:16px;">
+							<img src="{$basePath}/uploads/{$event->filePath}" alt="Příloha k akci {$event->name}" style="width:100%; border:1px solid #E2DDD6; border-radius:16px; background:#fff;">
+						</div>
+						<a href="{$basePath}/uploads/{$event->filePath}" target="_blank" rel="noreferrer" class="btn-secondary">Stáhnout obrázek</a>
+					{else}
+						<a href="{$basePath}/uploads/{$event->filePath}" target="_blank" rel="noreferrer" class="btn-secondary">Stáhnout soubor</a>
+					{/if}
+				{/if}
+
+				{if $report && $report->hasContent()}
+					<h3>Report z akce</h3>
+
+					{if $report->text !== ''}
+						<p class="report-text">{$report->text}</p>
+					{/if}
+
+					{if $report->getPdfRelativePath()}
+						<div class="report-content-block">
+							<iframe
+								src="{$basePath}/uploads/{$report->getPdfRelativePath()}"
+								title="PDF report k akci {$event->name}"
+								class="report-pdf-frame"
+							></iframe>
+							<div class="report-inline-actions">
+								<a href="{$basePath}/uploads/{$report->getPdfRelativePath()}" target="_blank" rel="noreferrer" class="btn-secondary">Stáhnout PDF</a>
+							</div>
+						</div>
+					{/if}
+
+					{if $report->imageEntries !== []}
+						{var $reportImagePaths = $report->getImageRelativePaths()}
+						<div class="report-gallery-grid">
+							{foreach $reportImagePaths as $reportImagePath}
+								<a href="{$basePath}/uploads/{$reportImagePath}" target="_blank" rel="noreferrer" class="report-gallery-item">
+									<img src="{$basePath}/uploads/{$reportImagePath}" alt="Obrázek reportu {$event->name}">
+								</a>
+							{/foreach}
+						</div>
+					{/if}
+				{/if}
+			</div>
+
+			<div>
+				<div class="event-sidebar-card">
+					<h3>Informace o akci</h3>
+					<ul class="event-info-list">
+						<li>
+							<span class="ei-icon"></span>
+							<div>
+								<span class="ei-label" style="color:blue">Datum</span>
+								<span class="ei-value">{if $event->date}{$event->date|date:'j. n. Y'}{else}Bude upřesněno{/if}</span>
+							</div>
+						</li>
+						<li>
+							<span class="ei-icon"></span>
+							<div>
+								<span class="ei-label" style="color:blue">Čas</span>
+								<span class="ei-value">{if $event->date}{$event->date|date:'H:i'}{else}Bude upřesněno{/if}</span>
+							</div>
+						</li>
+						<li>
+							<span class="ei-icon"></span>
+							<div>
+								<span class="ei-label" style="color:blue">Organizátor</span>
+								<span class="ei-value">{$event->organiser}</span>
+							</div>
+						</li>
+					</ul>
+
+					{if $isPast}
+						<button type="button" class="btn-primary" disabled style="opacity:0.5;">Akce již proběhla</button>
+					{elseif $user->isLoggedIn()}
+						{if $isAttending}
+							<a n:href="leave! $event->id" class="btn-secondary" style="width:100%;">Odhlásit se z akce</a>
+						{elseif $canAttend}
+							<a n:href="attend! $event->id" class="btn-primary" style="width:100%;">Chci se zúčastnit</a>
+						{else}
+							<button type="button" class="btn-secondary" disabled style="width:100%; opacity:0.75;hover:;">Akce je pro jinou skupinu</button>
+							<p style="font-size:13px; text-align:center; margin-top:10px; color:green;">Tato akce je určena pro skupiny {$audienceLabel}.</p>
+						{/if}
+					{else}
+						<button type="button" class="btn-primary" style="width:100%;" onclick="openModal('login')">Přihlásit se na akci</button>
+						<p style="font-size:12px; text-align:center; margin-top:10px;">Pro účast je potřeba přihlášení.</p>
+					{/if}
+
+					<div class="form-divider"></div>
+					<button type="button" class="btn-secondary" style="width:100%;" onclick="shareEvent()">Sdílet akci</button>
+					{if $googleCalendarUrl}
+						<a href="{$googleCalendarUrl}" target="_blank" rel="noreferrer" class="btn-secondary" style="width:100%; margin-top:10px;">Přidat do Google Kalendáře</a>
+					{else}
+						<button type="button" class="btn-secondary" disabled style="width:100%; margin-top:10px; opacity:0.5;">Přidat do Google Kalendáře</button>
+					{/if}
+				</div>
+			</div>
+		</div>
+	</div>
+{/block}

@@ -1,0 +1,34 @@
+<div class="row">
+    <div class="col-md-3">
+        <h4>Filtrovat akce</h4>
+        {control filterForm}
+    </div>
+
+    <div class="col-md-9" n:snippet="eventList">
+        {if count($events)}
+            <div class="row">
+                {foreach $events as $event}
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{$event->name}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    {if $event->date}{$event->date|date:'j. n. Y H:i'}{/if}
+                                </h6>
+                                <p class="card-text">{$event->description|truncate:100}</p>
+                                <div class="mb-2">
+                                    {foreach $event->tags as $tag}
+                                        <span class="badge bg-secondary me-1">{$tag}</span>
+                                    {/foreach}
+                                </div>
+                                <a href="{plink Event:detail $event->id}" class="btn btn-sm btn-primary">Více informací</a>
+                            </div>
+                        </div>
+                    </div>
+                {/foreach}
+            </div>
+        {else}
+            <p>Žádné akce neodpovídají filtrům.</p>
+        {/if}
+    </div>
+</div>

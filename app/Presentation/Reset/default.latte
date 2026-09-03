@@ -1,0 +1,26 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Reset hesla'}
+
+{block content}
+    <div class="content" style="padding-top:40px;">
+        <h2 class="section-title">Reset hesla</h2>
+
+        {form resetForm class => 'profile-edit-form'}
+            <ul n:ifcontent class="errors">
+                <li n:foreach="$form->getErrors() as $error">{$error}</li>
+            </ul>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label n:name="password">Nové heslo</label>
+                    <input n:name="password">
+                </div>
+            </div>
+
+            <div class="profile-form-actions">
+                {input send, class => 'btn-submit'}
+            </div>
+        {/form}
+    </div>
+{/block}

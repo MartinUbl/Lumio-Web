@@ -1,0 +1,70 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Navrhnout akci'}
+
+{block content}
+	<div class="content" style="padding-top:40px;">
+		<a n:href="Event:default" style="display:inline-flex; gap:6px; margin-bottom:32px;">&larr; Zpět na akce</a>
+
+		<div class="section-label">Komunita</div>
+		<h2 class="section-title">Navrhni akci</h2>
+		<p class="form-notice" style="max-width:720px; margin-bottom:24px;">
+			Vyplň základní informace o akci. Návrh se uloží jako čekající na schválení a pak se zobrazí správci v administraci.
+		</p>
+
+		{form suggestForm, class => 'form-card'}
+			<ul n:ifcontent class="errors">
+				<li n:foreach="$form->getErrors() as $error">{$error}</li>
+			</ul>
+
+			<div class="form-group">
+				<label n:name="name">Název akce</label>
+				<input n:name="name">
+			</div>
+
+			<div class="form-group">
+				<label n:name="description">Popis akce</label>
+				<textarea n:name="description" rows="6"></textarea>
+			</div>
+
+			<div class="form-row">
+				<div class="form-group">
+					<label n:name="date">Datum a čas</label>
+					<input n:name="date">
+				</div>
+				<div class="form-group">
+					<label n:name="organiser">Organizátor</label>
+					<input n:name="organiser">
+				</div>
+			</div>
+
+			<div class="form-row">
+				<div class="form-group">
+					<label n:name="audienceRoles">Pro koho je akce určena</label>
+					<select n:name="audienceRoles"></select>
+				</div>
+				<div class="form-group">
+					<label n:name="categoryTag">Kategorie</label>
+					<select n:name="categoryTag"></select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label n:name="areaTags">Obory</label>
+				<select n:name="areaTags"></select>
+			</div>
+
+			<div class="form-group">
+				<label n:name="attachment">Soubor k akci (nepovinné)</label>
+				<input n:name="attachment" accept=".pdf,image/*">
+			</div>
+
+			<p class="form-notice">Tip: podrž `Ctrl` nebo `Cmd`, pokud chceš vybrat více cílových skupin nebo oborů najednou.</p>
+
+			<div class="profile-form-actions">
+				<a n:href="Event:default" class="btn-secondary">Zrušit</a>
+				{input send, class => 'btn-submit'}
+			</div>
+		{/form}
+	</div>
+{/block}

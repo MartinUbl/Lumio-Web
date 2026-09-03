@@ -1,0 +1,27 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lumio-web-app
+  labels:
+    app: lumio-web-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lumio-web-app
+  template:
+    metadata:
+      labels:
+        app: lumio-web-app
+    spec:
+      imagePullSecrets:
+        - name: github-container-registry
+      containers:
+      - name: application
+        image: ghcr.io/martinubl/lumio-web:latest
+        ports:
+        - containerPort: 80
+        envFrom:
+          - secretRef:
+              name: database

@@ -1,0 +1,166 @@
+{
+    "1": {
+        "id": 1,
+        "name": "Prednaska o AI",
+        "description": "Zajimava prednaska o umele inteligenci.",
+        "organiser": "FEL ZCU",
+        "organiserId": 1,
+        "status": "approved",
+        "date": "2026-05-15T17:00:00+02:00",
+        "imagePath": null,
+        "filePath": null,
+        "eventReportPath": null,
+        "audienceTag": "Všechny",
+        "areaTags": [
+            "AI",
+            "Přednáška"
+        ],
+        "categoryTag": "Univerzitní",
+        "expertId": null,
+        "tags": [
+            "Všechny",
+            "Univerzitní",
+            "AI",
+            "Přednáška"
+        ]
+    },
+    "2": {
+        "id": 2,
+        "name": "Sportovni odpoledne",
+        "description": "Volejbal a fotbal pro vsechny.",
+        "organiser": "Jan Novak",
+        "organiserId": 2,
+        "status": "approved",
+        "date": "2026-05-20T15:00:00+02:00",
+        "imagePath": null,
+        "filePath": null,
+        "eventReportPath": null,
+        "audienceTag": "Všechny",
+        "areaTags": [
+            "Sport"
+        ],
+        "categoryTag": "Univerzitní",
+        "expertId": null,
+        "tags": [
+            "Všechny",
+            "Univerzitní",
+            "Sport"
+        ]
+    },
+    "3": {
+        "id": 3,
+        "name": "Workshop 3D tisk",
+        "description": "Prakticky workshop 3D tisku.",
+        "organiser": "CIIRC",
+        "organiserId": null,
+        "status": "approved",
+        "date": "2026-06-01T14:00:00+02:00",
+        "imagePath": null,
+        "filePath": null,
+        "eventReportPath": null,
+        "audienceTag": "Vsechny",
+        "areaTags": [
+            "Workshop",
+            "Technologie"
+        ],
+        "categoryTag": null,
+        "expertId": null,
+        "tags": [
+            "Vsechny",
+            "Workshop",
+            "Technologie"
+        ]
+    },
+    "4": {
+        "id": 4,
+        "name": "Demola Global",
+        "description": "Demola is a global community of co-creation experts, university students, and curious organizations, all driven by the desire to create impact and prepare for different futures.",
+        "organiser": "Demola",
+        "organiserId": 924642,
+        "status": "approved",
+        "date": "2026-04-27T15:00:00+02:00",
+        "imagePath": null,
+        "filePath": null,
+        "eventReportPath": null,
+        "audienceTag": "Student",
+        "areaTags": [
+            "Networking"
+        ],
+        "categoryTag": "Veřejné",
+        "expertId": 3,
+        "tags": [
+            "Student",
+            "Veřejné",
+            "Networking"
+        ]
+    },
+    "5": {
+        "id": 5,
+        "name": "Demola",
+        "description": "workshop",
+        "organiser": "Demola",
+        "organiserId": 924642,
+        "status": "approved",
+        "date": "2026-04-23T15:30:00+02:00",
+        "imagePath": null,
+        "filePath": "o8fxyhkmtwdwx7w1.png",
+        "eventReportPath": null,
+        "audienceTag": "Absolvent",
+        "areaTags": [
+            "Workshop"
+        ],
+        "categoryTag": "Veřejné",
+        "expertId": 3,
+        "tags": [
+            "Absolvent",
+            "Veřejné",
+            "Workshop"
+        ]
+    },
+    "6": {
+        "id": 6,
+        "name": "Demola2",
+        "description": "přednáška",
+        "organiser": "Demola",
+        "organiserId": null,
+        "status": "rejected",
+        "date": "2026-04-23T15:30:00+02:00",
+        "imagePath": null,
+        "filePath": null,
+        "eventReportPath": null,
+        "audienceTag": "Všechny",
+        "areaTags": [
+            "Přednáška"
+        ],
+        "categoryTag": "Veřejné",
+        "expertId": 1,
+        "tags": [
+            "Všechny",
+            "Veřejné",
+            "Přednáška"
+        ]
+    },
+    "7": {
+        "id": 7,
+        "name": "MechSuit",
+        "description": "Prezentace představí projekt, kterému se věnovali 2 žáci v rámci fakultní podpory SŠ studentů – MechSuit. Jde o robotické rameno, které zprvu vyvíjeli ve spojení s KME.\n\n",
+        "organiser": "Testovací Admin",
+        "organiserId": 999,
+        "status": "approved",
+        "date": "2026-04-16T16:00:00+02:00",
+        "imagePath": null,
+        "filePath": "vs3theycur5mzdui.png",
+        "eventReportPath": "u1pfag31ip.pdf",
+        "audienceTag": "Všechny",
+        "areaTags": [
+            "Technologie"
+        ],
+        "categoryTag": "Univerzitní",
+        "expertId": null,
+        "tags": [
+            "Všechny",
+            "Univerzitní",
+            "Technologie"
+        ]
+    }
+}

@@ -1,0 +1,9 @@
+{
+  "features": {
+    "ghcr.io/opencodeco/devcontainers/install-php-extensions:latest": {
+      "version": "0.1.225",
+      "resolved": "ghcr.io/opencodeco/devcontainers/install-php-extensions@sha256:7f8802cd8eacaf4dbdb0aa520b3b5ac859acc6e30dff387162fce7aa86de03bf",
+      "integrity": "sha256:7f8802cd8eacaf4dbdb0aa520b3b5ac859acc6e30dff387162fce7aa86de03bf"
+    }
+  }
+}

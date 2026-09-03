@@ -1,0 +1,98 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Správa uživatelů'}
+
+{block content}
+	<div class="content" style="padding-top:40px;">
+		<a n:href="Dashboard:default" style="display:inline-flex; gap:6px; margin-bottom:32px;">&larr; Zpět na dashboard</a>
+
+		<div class="section-label">Administrace</div>
+		<h2 class="section-title">Správa uživatelů</h2>
+
+		<div class="admin-filter-stack">
+			<div class="admin-filter-label">Filtrovat uživatele</div>
+			<div class="admin-filter-grid">
+				<div class="form-group" style="margin-bottom:0;">
+					<label for="admin-users-name">Jméno</label>
+					<input
+						type="search"
+						id="admin-users-name"
+						placeholder="Hledat podle jména"
+						oninput="filterAdminUsers()"
+					>
+				</div>
+
+				<div class="form-group" style="margin-bottom:0;">
+					<label for="admin-users-role">Role</label>
+					<select id="admin-users-role" onchange="filterAdminUsers()">
+						<option value="">Všechny role</option>
+						{foreach $roleOptions as $roleValue => $roleLabel}
+							<option value="{$roleValue}">{$roleLabel}</option>
+						{/foreach}
+					</select>
+				</div>
+			</div>
+
+			<div class="admin-filter-actions">
+				<button type="button" class="filter-reset" id="admin-users-reset" onclick="resetAdminUsersFilters()" style="display:none;">× Zrušit filtr</button>
+			</div>
+		</div>
+
+		<table class="table table-striped admin-table admin-responsive-table">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Jméno</th>
+					<th>E-mail</th>
+					<th>Role</th>
+					<th>Fakulta</th>
+					<th>Stav</th>
+					<th>Akce</th>
+				</tr>
+			</thead>
+			<tbody id="admin-users-table">
+				{foreach $users as $reguser}
+					<tr data-filter-row="1" data-name="{$reguser->name}" data-role="{$reguser->role}">
+						<td data-label="ID">{$reguser->id}</td>
+						<td data-label="Jméno">{$reguser->name}</td>
+						<td data-label="E-mail">{$reguser->email}</td>
+						<td data-label="Role">{$roleLabels[$reguser->id] ?? $reguser->role}</td>
+						<td data-label="Fakulta">{$reguser->faculty ?: '-'}</td>
+						<td data-label="Stav">{if $reguser->active}Aktivní{else}Blokovaný{/if}</td>
+						<td class="admin-table-actions" data-label="Akce">
+							{if $reguser->id === $currentUserId}
+								<span class="text-muted">Vlastní účet nelze měnit</span>
+							{else}
+								{if $reguser->admin}
+									<form method="post" action="{link revokeAdmin! $reguser->id}" style="display:inline-block; margin-right:6px;" onsubmit="return confirm('Opravdu odebrat admin oprávnění?')">
+										<input type="hidden" name="_token" value="{$adminActionToken}">
+										<button type="submit" class="btn btn-sm btn-outline-dark">Odebrat admina</button>
+									</form>
+								{else}
+									<form method="post" action="{link grantAdmin! $reguser->id}" style="display:inline-block; margin-right:6px;" onsubmit="return confirm('Opravdu přidat admin oprávnění?')">
+										<input type="hidden" name="_token" value="{$adminActionToken}">
+										<button type="submit" class="btn btn-sm btn-dark">Přidat admina</button>
+									</form>
+								{/if}
+
+								{if $reguser->active}
+									<form method="post" action="{link block! $reguser->id}" style="display:inline-block;" onsubmit="return confirm('Opravdu zablokovat uživatele?')">
+										<input type="hidden" name="_token" value="{$adminActionToken}">
+										<button type="submit" class="btn btn-sm btn-danger">Zablokovat</button>
+									</form>
+								{else}
+									<form method="post" action="{link unblock! $reguser->id}" style="display:inline-block;" onsubmit="return confirm('Opravdu odblokovat uživatele?')">
+										<input type="hidden" name="_token" value="{$adminActionToken}">
+										<button type="submit" class="btn btn-sm btn-outline-dark">Odblokovat</button>
+									</form>
+								{/if}
+							{/if}
+						</td>
+					</tr>
+				{/foreach}
+			</tbody>
+		</table>
+
+		<div class="experts-empty" id="admin-users-empty" style="display:none;">Žádný uživatel neodpovídá zadanému jménu.</div>
+	</div>
+{/block}

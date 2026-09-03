@@ -1,0 +1,51 @@
+{
+    "zolya80@seznam.cz": {
+        "id": 924642,
+        "name": "Malika Gafurova",
+        "email": "zolya80@seznam.cz",
+        "passwordHash": "$2y$12$888m0MXd3dsdwRZukaKGY.rLxcOIqVfzYoAfCN7xMaWEuIESde7LO",
+        "role": "student",
+        "faculty": "FAV",
+        "active": true,
+        "tags": [],
+        "attendedEventIds": [
+            6
+        ]
+    },
+    "admin@lumio.cz": {
+        "id": 999,
+        "name": "Testovací Admin",
+        "email": "admin@lumio.cz",
+        "passwordHash": "$2y$12$3K59JEDORhyEoPxJpv8Siu8RxTZt\/GwA88E6VOW0A0kxqRYyH5ExK",
+        "role": "admin",
+        "faculty": null,
+        "active": true,
+        "tags": [],
+        "attendedEventIds": [
+            4,
+            7
+        ]
+    },
+    "velcjana@gmail.com": {
+        "id": 104706,
+        "name": "Jana Velc",
+        "email": "velcjana@gmail.com",
+        "passwordHash": "$2y$12$p9VNhBLxhYrn8uwnryFSN.JW.x0hclpCwqvkVH686jqvwkIhyZVZq",
+        "role": "ostatní",
+        "faculty": null,
+        "active": false,
+        "tags": [],
+        "attendedEventIds": []
+    },
+    "velcjan@gmail.com": {
+        "id": 280572,
+        "name": "Jan Velc",
+        "email": "velcjan@gmail.com",
+        "passwordHash": "$2y$12$x4TMWMDJunkkx4aAMzikeONONzD6YZ1DEcvsmsNfROy5.zZOE33GC",
+        "role": "student",
+        "faculty": "FAV",
+        "active": true,
+        "tags": [],
+        "attendedEventIds": []
+    }
+}

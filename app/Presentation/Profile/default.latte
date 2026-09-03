@@ -1,0 +1,134 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Můj profil'}
+
+{block content}
+	<div class="content" style="padding-top:40px;">
+		<div class="section-label">Účet</div>
+		<h2 class="section-title">Můj profil</h2>
+
+		<div class="profile-layout">
+			<div class="profile-sidebar">
+				<div class="profile-card">
+					<div class="profile-avatar">{$profile->name|substr:0,1|upper}</div>
+					<div class="profile-name">{$profile->name}</div>
+					<div class="profile-role-badge">{$profileRoleLabel}</div>
+					{if $showFacultyField}
+						<p class="profile-bio">
+							{if $profileFaculty}
+								{$profileFaculty}
+							{else}
+								Fakulta zatím není vyplněná.
+							{/if}
+						</p>
+					{/if}
+				</div>
+
+				<div class="profile-stats">
+					<div>
+						<div class="profile-stat-value">{$attendedCount}</div>
+						<div class="profile-stat-label">Navštívené akce</div>
+					</div>
+					<div>
+						<div class="profile-stat-value">{$suggestedCount}</div>
+						<div class="profile-stat-label">Navržené akce</div>
+					</div>
+				</div>
+			</div>
+
+			<div>
+				<div class="profile-tabs">
+					<button type="button" class="profile-tab active" data-profile-tab="profile-edit" onclick="switchProfileTab('profile-edit', this)">Upravit profil</button>
+					<button type="button" class="profile-tab" data-profile-tab="profile-attended" onclick="switchProfileTab('profile-attended', this)">Navštívené akce</button>
+					<button type="button" class="profile-tab" data-profile-tab="profile-suggested" onclick="switchProfileTab('profile-suggested', this)">Navržené akce</button>
+				</div>
+
+				<div id="profile-edit" class="profile-tab-content active">
+					{form profileForm, class => 'profile-edit-form'}
+						<ul n:ifcontent class="errors">
+							<li n:foreach="$form->getErrors() as $error">{$error}</li>
+						</ul>
+
+						<h3>Upravit údaje</h3>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label n:name="name">Jméno</label>
+								<input n:name="name">
+							</div>
+							<div class="form-group">
+								<label n:name="email">E-mail</label>
+								<input n:name="email">
+							</div>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label n:name="role">Role</label>
+								<select n:name="role"></select>
+							</div>
+							<div class="form-group" id="profile-faculty-group">
+								<label n:name="faculty">Fakulta</label>
+								<select n:name="faculty"></select>
+							</div>
+						</div>
+
+						<div class="profile-form-actions">
+							{input send, class => 'btn-submit'}
+						</div>
+					{/form}
+				</div>
+
+				<div id="profile-attended" class="profile-tab-content">
+					<div class="profile-edit-form">
+						<h3>Navštívené akce</h3>
+						{if $attendedEvents}
+							<div class="activities-grid">
+								{foreach $attendedEvents as $event}
+									<article class="activity-card">
+										<div class="activity-card-top">
+											<span class="activity-type-badge">Účast</span>
+											<span class="activity-year">{if $event->date}{$event->date|date:'j. n. Y'}{/if}</span>
+										</div>
+										<h3>{$event->name}</h3>
+										<p>{$event->description|truncate:120}</p>
+										<a n:href="Event:detail $event->id" class="btn-secondary">Detail akce</a>
+									</article>
+								{/foreach}
+							</div>
+						{else}
+							<p>Zatím nemáš žádné navštívené nebo přihlášené akce.</p>
+						{/if}
+					</div>
+				</div>
+
+				<div id="profile-suggested" class="profile-tab-content">
+					<div class="profile-edit-form">
+						<h3>Navržené akce</h3>
+						{if $suggestedEvents}
+							<div class="activities-grid">
+								{foreach $suggestedEvents as $event}
+									<article class="activity-card">
+										<div class="activity-card-top">
+											<span class="activity-type-badge">
+												{if $event->status === 'approved'}Schváleno{elseif $event->status === 'rejected'}Zamítnuto{else}Čeká na schválení{/if}
+											</span>
+											<span class="activity-year">{if $event->date}{$event->date|date:'j. n. Y'}{/if}</span>
+										</div>
+										<h3>{$event->name}</h3>
+										<p>{$event->description|truncate:120}</p>
+										{if $event->status === 'approved'}
+											<a n:href="Event:detail $event->id" class="btn-secondary">Detail akce</a>
+										{/if}
+									</article>
+								{/foreach}
+							</div>
+						{else}
+							<p>Zatím jsi nenavrhl žádnou akci.</p>
+						{/if}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/block}

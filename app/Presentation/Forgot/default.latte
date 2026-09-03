@@ -1,0 +1,26 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Zapomenuté heslo'}
+
+{block content}
+    <div class="content" style="padding-top:40px;">
+        <h2 class="section-title">Zapomenuté heslo</h2>
+
+        {form forgotForm class => 'profile-edit-form'}
+            <ul n:ifcontent class="errors">
+                <li n:foreach="$form->getErrors() as $error">{$error}</li>
+            </ul>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label n:name="email">Tvůj e-mail</label>
+                    <input n:name="email">
+                </div>
+            </div>
+
+            <div class="profile-form-actions">
+                {input send, class => 'btn-submit'}
+            </div>
+        {/form}
+    </div>
+{/block}

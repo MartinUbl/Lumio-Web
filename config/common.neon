@@ -1,0 +1,51 @@
+# see https://doc.nette.org/en/configuring
+
+parameters:
+	wwwDir: %rootDir%/../www
+	uploadDir: %wwwDir%/uploads
+
+
+application:
+	errorPresenter:
+		4xx: Error:Error4xx
+		5xx: Error:Error5xx
+	mapping: App\Presentation\*\**Presenter
+
+
+database:
+	dsn: 'mysql:host=%env.MARIADB_HOST%;port=%env.MARIADB_PORT%;dbname=%env.MARIADB_DATABASE%'
+	user: %env.MARIADB_USER%
+	password: %env.MARIADB_PASSWORD%
+	options:
+	    charset: latin1
+
+php:
+	session.gc_maxlifetime: 1209600
+
+session:
+	autoStart: true
+	expiration: 14 days
+
+security:
+	users: []
+	authentication:
+		expiration: '14 days'
+
+
+latte:
+	strictParsing: yes
+	extensions:
+		- App\Presentation\Accessory\LatteExtension
+
+
+assets:
+	mapping:
+		default:
+			path: assets
+			# type: vite  # Uncomment to activate Vite for asset building
+
+
+di:
+	export:
+		parameters: no
+		tags: no

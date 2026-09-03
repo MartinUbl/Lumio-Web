@@ -1,0 +1,121 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Správa akcí'}
+
+{block content}
+	<div class="content" style="padding-top:40px;">
+		<a n:href="Dashboard:default" style="display:inline-flex; gap:6px; margin-bottom:32px;">&larr; Zpět na dashboard</a>
+
+		<div class="section-label">Administrace</div>
+		<h2 class="section-title">Správa akcí</h2>
+
+		<div class="admin-filter-stack">
+			<div class="admin-filter-label">Filtrovat akce podle stavu, času a názvu.</div>
+			<div class="admin-filter-grid">
+				<div class="form-group" style="margin-bottom:0;">
+					<select id="admin-events-status" aria-label="Filtrovat podle stavu" onchange="filterAdminEvents()">
+						<option value="">Všechny stavy</option>
+						<option value="suggested">Ke schválení</option>
+						<option value="approved">Schválené</option>
+						<option value="rejected">Zamítnuté</option>
+					</select>
+				</div>
+
+				<div class="form-group" style="margin-bottom:0;">
+					<select id="admin-events-time" aria-label="Filtrovat podle času" onchange="filterAdminEvents()">
+						<option value="">Všechny akce</option>
+						<option value="upcoming">Nadcházející</option>
+						<option value="past">Proběhlé</option>
+					</select>
+				</div>
+
+				<div class="form-group" style="margin-bottom:0;">
+					<input
+						type="search"
+						id="admin-events-name"
+						placeholder="Hledat podle názvu"
+						aria-label="Filtrovat podle názvu"
+						oninput="filterAdminEvents()"
+					>
+				</div>
+			</div>
+
+			<div class="admin-filter-actions">
+				<button type="button" class="filter-reset" id="admin-events-reset" onclick="resetAdminEventsFilters()" style="display:none;">× Zrušit filtry</button>
+			</div>
+		</div>
+
+		{if $selectedAttendeeEvent}
+			<div class="form-card" style="margin-bottom:24px;">
+				<div class="admin-attendee-card-header">
+					<h3>Účastníci akce: {$selectedAttendeeEvent->name}</h3>
+					<a n:href="default" class="admin-attendee-close">Skrýt seznam</a>
+				</div>
+				{if $selectedAttendeeNames !== []}
+					<ul class="admin-attendee-list">
+						{foreach $selectedAttendeeNames as $attendeeName}
+							<li>{$attendeeName}</li>
+						{/foreach}
+					</ul>
+				{else}
+					<p class="form-notice" style="margin-bottom:0;">Na tuto akci zatím není nikdo přihlášený.</p>
+				{/if}
+			</div>
+		{/if}
+
+		<table class="table table-striped admin-table admin-responsive-table">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Název</th>
+					<th>Datum</th>
+					<th>Stav</th>
+					<th>Akce</th>
+					<th>Účastníci</th>
+				</tr>
+			</thead>
+			<tbody id="admin-events-table">
+				{foreach $events as $event}
+					{var $timeState = !$event->date ? 'undated' : ($event->date < new DateTimeImmutable() ? 'past' : 'upcoming')}
+					{var $attendeeCount = $event->id !== null ? ($attendeeCounts[$event->id] ?? 0) : 0}
+					<tr
+						data-filter-row="1"
+						data-name="{$event->name}"
+						data-status="{$event->status}"
+						data-time="{$timeState}"
+					>
+						<td data-label="ID">{$event->id}</td>
+						<td data-label="Název">{$event->name}</td>
+						<td data-label="Datum">{if $event->date}{$event->date|date:'j. n. Y H:i'}{else}-{/if}</td>
+						<td data-label="Stav">
+							{if $event->status === 'suggested'}
+								<span class="badge bg-warning">Ke schválení</span>
+							{elseif $event->status === 'approved'}
+								<span class="badge bg-success">Schváleno</span>
+							{elseif $event->status === 'rejected'}
+								<span class="badge bg-danger">Zamítnuto</span>
+							{/if}
+						</td>
+						<td class="admin-table-actions" data-label="Akce">
+							{if $event->status === 'suggested'}
+								<div class="admin-event-decision-actions">
+									<a n:href="approve! $event->id" class="btn btn-sm btn-success" onclick="return confirm('Schválit?')">Schválit</a>
+									<a n:href="reject! $event->id" class="btn btn-sm btn-warning" onclick="return confirm('Opravdu zamítnout?')">Zamítnout</a>
+								</div>
+							{/if}
+							<div class="admin-event-primary-actions">
+								<a n:href="edit $event->id" class="btn btn-sm btn-primary">Upravit</a>
+								<a n:href="hide! $event->id" class="btn btn-sm btn-secondary" onclick="return confirm('Opravdu skrýt?')">Skrýt</a>
+							</div>
+						</td>
+						<td data-label="Účastníci">
+							<a n:href="default, attendeeEventId => $event->id" class="admin-count-link">{$attendeeCount}</a>
+						</td>
+					</tr>
+				{/foreach}
+			</tbody>
+		</table>
+
+		<div class="experts-empty" id="admin-events-empty" style="display:none;">Žádná akce neodpovídá zvolenému filtru.</div>
+	</div>
+{/block}

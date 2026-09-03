@@ -1,0 +1,137 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Akce'}
+
+{block content}
+	<div class="content" style="padding-top:40px;">
+		<div class="section-label">Kalendář</div>
+		<h2 class="section-title">Všechny akce</h2>
+
+		<div class="filter-panel">
+			<div class="filter-panel-head">
+				<h3>Filtry akcí</h3>
+				<p>Vyber měsíc, obory a kategorii. Výsledky se aktualizují hned po změně filtru.</p>
+			</div>
+
+			<div class="filter-layout">
+				<div class="filter-group">
+					<div class="filter-chip-row">
+						{foreach $monthFilters as $value => $label}
+							<button
+								type="button"
+								class="filter-chip"
+								data-grid-id="events-grid"
+								data-filter-group="month"
+								data-tag="{$value}"
+								onclick="toggleTag(this, 'events-grid', 'events-empty', 'events-reset', 'events-load-more-wrap')"
+							>{$label}</button>
+						{/foreach}
+					</div>
+				</div>
+
+				<div class="filter-group">
+					<div class="filter-group-title">Obory</div>
+					<div class="filter-chip-row">
+						{foreach $areaTags as $tag}
+							<button
+								type="button"
+								class="filter-chip"
+								data-grid-id="events-grid"
+								data-filter-group="area"
+								data-tag="{$tag}"
+								onclick="toggleTag(this, 'events-grid', 'events-empty', 'events-reset', 'events-load-more-wrap')"
+							>{$tag}</button>
+						{/foreach}
+					</div>
+				</div>
+
+				<div class="filter-group">
+					<div class="filter-group-title">Kategorie</div>
+					<div class="filter-chip-row">
+						{foreach $categoryTags as $tag}
+							<button
+								type="button"
+								class="filter-chip"
+								data-grid-id="events-grid"
+								data-filter-group="category"
+								data-tag="{$tag}"
+								onclick="toggleTag(this, 'events-grid', 'events-empty', 'events-reset', 'events-load-more-wrap')"
+							>{$tag}</button>
+						{/foreach}
+					</div>
+				</div>
+			</div>
+
+			<div class="filter-panel-actions">
+				<button type="button" class="filter-reset" id="events-reset" onclick="resetTags('events-grid', 'events-empty', 'events-reset', 'events-load-more-wrap')" style="display:none;">× Zrušit filtry</button>
+			</div>
+		</div>
+
+		{if $events}
+			<div class="calendar-grid" id="events-grid" data-visible-limit="12" data-visible-count="12">
+				{foreach $events as $event}
+					<a
+						class="event-card"
+						n:href="Event:detail $event->id"
+						data-filter-card="1"
+						data-tags-month="{if $event->date}{$event->date|date:'m'}{/if}"
+						data-tags-area="{implode('|', $event->getAreaTags())}"
+						data-tags-category="{$event->getCategoryTag() ?? ''}"
+					>
+						<div class="event-date">
+							<div class="day">{if $event->date}{$event->date|date:'j'}{/if}</div>
+							<div class="month">{if $event->date}{$event->date|czechMonth|upper}{/if}</div>
+							<div class="time">{if $event->date}{$event->date|date:'H:i'}{/if}</div>
+						</div>
+						<div class="event-info">
+							<h3>{$event->name}</h3>
+							<p>{$event->description|truncate:130}</p>
+							<div class="event-organiser">
+								<span class="event-organiser-label" style="color:darkblue">Organizátor:</span>
+								<span>{$event->organiser}</span>
+							</div>
+							{if isset($linkedExpertNames[$event->id])}
+								<div class="event-organiser">
+									<span class="event-organiser-label" style="color:darkblue">Připnutý odborník:</span>
+									<span>{$linkedExpertNames[$event->id]}</span>
+								</div>
+							{/if}
+							<div class="event-card-tags">
+								{foreach $event->getPublicDisplayTags() as $tag}
+									<span class="event-tag tag-{$tag['type']}">{$tag['label']}</span>
+								{/foreach}
+							</div>
+						</div>
+					</a>
+				{/foreach}
+			</div>
+			<div class="experts-empty" id="events-empty" style="display:none;">Žádná akce neodpovídá zvoleným filtrům.</div>
+			<div class="events-load-more-wrap" id="events-load-more-wrap">
+				<button type="button" class="btn-secondary events-load-more" id="events-load-more" onclick="loadMoreCards('events-grid', 12, 'events-empty', 'events-reset', 'events-load-more-wrap')">
+					Načíst další akce
+				</button>
+				<p class="events-load-more-note">Zobrazíme vždy dalších 12 akcí bez ztráty nastavených filtrů.</p>
+			</div>
+		{else}
+			<div class="empty-state">
+				<span class="empty-state-icon">...</span>
+				<h3>Zatím žádné akce</h3>
+				<p>Jakmile bude schválená další akce, objeví se tady.</p>
+			</div>
+		{/if}
+
+		<div class="divider"></div>
+
+		<div class="events-cta-banner">
+			<div>
+				<h2>Máš nápad na akci?</h2>
+                    <p>Navrhni vlastní přednášku, workshop nebo komunitní setkání a pošli ho ke schválení.</p>
+			</div>
+			{if $user->isLoggedIn()}
+				<a n:href="Event:suggest" class="btn-primary">Navrhnout akci</a>
+			{else}
+				<button type="button" class="btn-primary" onclick="openModal('register')">Začít registrací</button>
+			{/if}
+		</div>
+	</div>
+{/block}

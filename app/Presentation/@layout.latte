@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{ifset $pageTitle}{$pageTitle} - {/ifset}Lumio</title>
+	<meta name="description" content="{$pageDescription ?? 'Komunita, která propojuje studenty, odborníky a akce.'}">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{$basePath}/css/style.css">
+
+	{block head}{/block}
+</head>
+<body>
+{var $presenterName = $presenter->getName()}
+{var $identity = $user->getIdentity()}
+{var $displayName = $identity->name ?? $identity->data['name'] ?? 'Můj účet'}
+
+<nav>
+	<a class="nav-brand" n:href="Home:default">
+		<div class="logo-box">LU</div>
+		<div>
+			<div class="brand-text">LUMIO</div>
+			<div class="brand-sub">Studentská komunita</div>
+		</div>
+	</a>
+
+	<button class="nav-hamburger" id="nav-hamburger" aria-label="Otevřít menu" aria-expanded="false" onclick="toggleMobileMenu()">
+		<span></span><span></span><span></span>
+	</button>
+</nav>
+
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+	<a n:href="Home:default" class="{if $presenterName === 'Home'}active{/if}" onclick="closeMobileMenu()">Úvod</a>
+	<a n:href="Event:default" class="{if $presenterName === 'Event'}active{/if}" onclick="closeMobileMenu()">Akce</a>
+	<a n:href="Expert:default" class="{if $presenterName === 'Expert'}active{/if}" onclick="closeMobileMenu()">Databáze odborníků</a>
+	<a n:href="Reports:default" class="{if $presenterName === 'Reports'}active{/if}" onclick="closeMobileMenu()">Reporty z akcí</a>
+	{if $user->isLoggedIn() && $canAccessAdmin}
+		<a n:href="Dashboard:default" class="{if in_array($presenterName, ['Dashboard', 'AdminEvents', 'AdminUsers', 'AdminReports', 'AdminExperts', 'AdminTags'], true)}active{/if}" onclick="closeMobileMenu()">Administrace</a>
+	{/if}
+	<div class="nav-mobile-divider"></div>
+	{if $user->isLoggedIn()}
+		<a n:href="Profile:default" class="{if $presenterName === 'Profile'}active{/if}" onclick="closeMobileMenu()">Můj profil</a>
+		<div class="nav-mobile-user">Přihlášený uživatel: {$displayName}</div>
+		<a n:href="Sign:out" class="btn-auth" onclick="closeMobileMenu()">Odhlásit se</a>
+	{else}
+		<button type="button" class="btn-auth" id="btn-open-modal" onclick="openModal('login'); closeMobileMenu()">Přihlášení</button>
+		<button type="button" class="btn-secondary" onclick="openModal('register'); closeMobileMenu()">Registrace</button>
+	{/if}
+</div>
+
+{ifset $flashes}
+	<div class="flash-messages">
+		{foreach $flashes as $flash}
+			<div class="flash flash-{$flash->type}">{$flash->message}</div>
+		{/foreach}
+	</div>
+{/ifset}
+
+<main class="page-shell">
+	{include content}
+</main>
+
+{if !$user->isLoggedIn()}
+	<div class="modal-overlay" id="modal-overlay" data-auto-open="{$authModalOpen ? '1' : '0'}" data-auth-tab="{$authModalTab}">
+		<div class="auth-modal">
+			<button type="button" class="modal-close" aria-label="Zavřít" onclick="closeModal()">×</button>
+			<h2 id="modal-title">Vítej zpět</h2>
+			<p class="modal-sub" id="modal-sub">Přihlas se ke svému účtu komunity.</p>
+			<div class="modal-tabs">
+				<button type="button" class="modal-tab active" id="tab-login" aria-selected="true" onclick="switchTab('login')">Přihlásit se</button>
+				<button type="button" class="modal-tab" id="tab-register" aria-selected="false" onclick="switchTab('register')">Registrace</button>
+			</div>
+
+			<div id="modal-form-login" class="auth-form-shell">
+				{control signInForm}
+				<div class="auth-modal-helper">
+					<a n:href="Forgot:default">Zapomněl/a jsem heslo</a>
+				</div>
+			</div>
+
+			<div id="modal-form-register" class="auth-form-shell" style="display:none;">
+				{control signUpForm}
+			</div>
+		</div>
+	</div>
+{/if}
+
+<footer>
+	<span class="footer-brand">Lumio</span>
+</footer>
+
+<button type="button" class="back-to-top" id="back-to-top" aria-label="Posunout nahoru" title="Nahoru">&uarr;</button>
+
+<script src="{$basePath}/js/main.js?v=20260503c"></script>
+{block scripts}{/block}
+</body>
+</html>

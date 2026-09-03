@@ -1,0 +1,25 @@
+services:
+    - App\Core\RouterFactory::createRouter
+
+    - App\Model\Repositories\EventRepository
+    - App\Model\Repositories\UserRepository
+    - App\Model\Repositories\TagRepository
+    - App\Model\Repositories\ExpertRepository
+
+    - App\Model\Security\UserAuthenticator
+
+    - App\Model\Services\EventReportService(uploadDir: %uploadDir%)
+
+    - App\Presentation\Event\EventPresenter(uploadDir: %uploadDir%)
+    - App\Presentation\AdminEvents\AdminEventsPresenter(uploadDir: %uploadDir%)
+
+    - App\Presentation\Accessory\DiscordIntegration(port: %env.DISCORD_BOT_PORT%)
+
+
+search:
+    - in: %appDir%
+      classes:
+          - *Facade
+          - *Factory
+          - *Repository
+          - *Service

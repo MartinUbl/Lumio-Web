@@ -1,0 +1,28 @@
+# https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: lumio-web-app
+spec:
+  selector:
+    app: lumio-web-app
+  type: ClusterIP
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+    name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lumio-database
+spec:
+  selector:
+    app: lumio-database
+  type: ClusterIP
+  ports:
+  - port: 3306
+    protocol: TCP
+    targetPort: 3306
+    name: mysql

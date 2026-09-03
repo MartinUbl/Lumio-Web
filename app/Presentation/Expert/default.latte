@@ -1,0 +1,106 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Databáze odborníků'}
+
+{block content}
+	<div class="content" style="padding-top:40px;">
+		<div class="section-label">Síť kontaktů</div>
+		<h2 class="section-title">Databáze odborníků</h2>
+		<p class="form-notice" style="max-width:780px; margin-bottom:28px;">
+			Najdi odborníky, kteří mohou pomoct s konzultací, inspirací nebo propojením na další příležitosti.
+		</p>
+
+		{if $requiresLogin}
+			<div class="experts-login-wall">
+				<h3>Databáze odborníků je dostupná po přihlášení.</h3>
+				<p>Po přihlášení uvidíš kontakty, oblasti odbornosti i možnosti, jak se s odborníky propojit.</p>
+				<div class="experts-login-wall-buttons">
+					<button type="button" class="btn-primary" onclick="openModal('login')">Přihlásit se</button>
+					<button type="button" class="btn-secondary" onclick="openModal('register')">Registrovat se</button>
+				</div>
+			</div>
+		{else}
+			<div class="filter-panel">
+				<div class="filter-panel-head">
+					<h3>Filtry odborníků</h3>
+					<p>Vyber obory, které tě zajímají. Výsledky se přepočítají okamžitě.</p>
+				</div>
+
+				<div class="filter-layout filter-layout-single">
+					<div class="filter-group">
+						<div class="filter-group-title">Obory</div>
+						<div class="filter-chip-row">
+							{foreach $expertAreaTags as $tag}
+								<button
+									type="button"
+									class="filter-chip"
+									data-grid-id="experts-grid"
+									data-filter-group="area"
+									data-tag="{$tag}"
+									onclick="toggleTag(this, 'experts-grid', 'experts-empty', 'experts-reset', 'experts-load-more-wrap')"
+								>{$tag}</button>
+							{/foreach}
+						</div>
+					</div>
+				</div>
+
+				<div class="filter-panel-actions">
+					<button type="button" class="filter-reset" id="experts-reset" onclick="resetTags('experts-grid', 'experts-empty', 'experts-reset', 'experts-load-more-wrap')" style="display:none;">× Zrušit filtry</button>
+				</div>
+			</div>
+
+			{if $experts}
+				<div class="experts-list" id="experts-grid" data-visible-limit="12" data-visible-count="12">
+					{foreach $experts as $expert}
+						<article
+							class="expert-card"
+							data-filter-card="1"
+							data-tags-area="{implode('|', $expert->tags)}"
+						>
+							<div class="expert-avatar">{$expert->name|substr:0,1|upper}</div>
+							<div class="expert-info">
+								<div class="expert-field">{if $expert->institution}{$expert->institution}{else}Odborník komunity{/if}</div>
+								<h3>{if $expert->degree != ""}{$expert->degree . ". "}{/if}{$expert->name}</h3>
+								{if $expert->note}
+									<p>{$expert->note}</p>
+								{/if}
+
+								<div class="event-card-tags" style="margin:14px 0 10px;">
+									{foreach $expert->tags as $tag}
+										<span class="event-tag tag-area">{$tag}</span>
+									{/foreach}
+								</div>
+
+								<div class="expert-contact-list">
+									{if $expert->email}
+										<div><strong>E-mail:</strong> <a href="mailto:{$expert->email}">{$expert->email}</a></div>
+									{/if}
+									{if $expert->phone}
+										<div><strong>Telefon:</strong> <a href="tel:{$expert->phone}">{$expert->phone}</a></div>
+									{/if}
+								</div>
+							</div>
+						</article>
+					{/foreach}
+				</div>
+				<div class="experts-empty" id="experts-empty" style="display:none;">Žádný odborník neodpovídá zvoleným filtrům.</div>
+				<div class="events-load-more-wrap" id="experts-load-more-wrap" style="display:none;">
+					<button
+						type="button"
+						class="events-load-more"
+						onclick="loadMoreCards('experts-grid', 12, 'experts-empty', 'experts-reset', 'experts-load-more-wrap')"
+					>
+						Načíst další odborníky
+					</button>
+					<p class="events-load-more-note">Zobrazíme další odborníky, kteří odpovídají zvoleným filtrům.</p>
+				</div>
+			{else}
+				<div class="empty-state">
+					<span class="empty-state-icon">...</span>
+					<h3>Zatím tu nejsou žádní odborníci</h3>
+					<p>Jakmile bude databáze doplněná, objeví se tady kontakty a štítky odborností.</p>
+				</div>
+			{/if}
+		{/if}
+	</div>
+{/block}

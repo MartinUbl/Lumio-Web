@@ -1,0 +1,119 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Úvod'}
+
+{block content}
+	<div class="hero-img">
+		<div class="hero-blob"></div>
+		<div class="hero-blob2"></div>
+		<div class="hero-text">
+			<h1>Prostor pro studenty,<br>kteří chtějí víc.</h1>
+			<p>Komunita, která tě propojí s odborníky, akcemi a příležitostmi.</p>
+		</div>
+	</div>
+
+	<div class="content">
+		<section class="home-section">
+			<div class="section-label">Nadcházející akce</div>
+			<h2 class="section-title">Kalendář akcí</h2>
+
+			{if $upcomingEvents}
+				<div class="calendar-grid" id="home-events-grid">
+					{foreach $upcomingEvents as $event}
+						<a
+							class="event-card"
+							n:href="Event:detail $event->id"
+							data-filter-card="1"
+							data-tags-month="{if $event->date}{$event->date|date:'m'}{/if}"
+							data-tags-area="{implode('|', $event->getAreaTags())}"
+							data-tags-category="{$event->getCategoryTag() ?? ''}"
+						>
+							<div class="event-date">
+								<div class="day">{$event->date|date:'j'}</div>
+								<div class="month">{$event->date|czechMonth|upper}</div>
+								<div class="time">{$event->date|date:'H:i'}</div>
+							</div>
+							<div class="event-info">
+								<h3>{$event->name}</h3>
+								<p>{$event->description|truncate:110}</p>
+								<div class="event-organiser">
+									<span class="event-organiser-label" style="color:darkblue">Organizátor:</span>
+									<span>{$event->organiser}</span>
+								</div>
+								{if isset($linkedExpertNames[$event->id])}
+									<div class="event-organiser">
+										<span class="event-organiser-label">Připnutý odborník:</span>
+										<span>{$linkedExpertNames[$event->id]}</span>
+									</div>
+								{/if}
+								<div class="event-card-tags">
+									{foreach array_slice($event->getPublicDisplayTags(), 0, 3) as $tag}
+										<span class="event-tag tag-{$tag['type']}">{$tag['label']}</span>
+									{/foreach}
+								</div>
+							</div>
+						</a>
+					{/foreach}
+				</div>
+				<div class="experts-empty" id="home-events-empty" style="display:none;">Žádná akce neodpovídá zvoleným filtrům.</div>
+				<div class="home-actions">
+					<a n:href="Event:default" class="btn-secondary">Zobrazit všechny akce</a>
+				</div>
+			{else}
+				<div class="empty-state">
+					<span class="empty-state-icon">...</span>
+					<h3>Zatím žádné akce</h3>
+					<p>Brzy přidáme nové příležitosti, setkání i workshopy.</p>
+				</div>
+			{/if}
+		</section>
+
+		<div class="divider"></div>
+
+		<section class="home-section">
+			<div class="discord-banner home-banner">
+				<div>
+					<h2>Připoj se k naší Discord komunitě</h2>
+					<p>Diskuze, studijní skupiny a prostor, kde se potkávají aktivní studenti.</p>
+				</div>
+				<a class="btn-discord" href="{$discordInviteLink}" target="_blank" rel="noreferrer">Připojit se</a>
+			</div>
+		</section>
+
+		<div class="divider"></div>
+
+		<section class="home-section">
+			<div class="experts-cta">
+				<div>
+					<h2>Co se děje na ZČU?</h2>
+					<p>Sleduj důležité aktuality, novinky a zajímavé informace z univerzitního prostředí na webu info.zcu.cz.</p>
+				</div>
+				<a href="{$infoZcuLink}" target="_blank" rel="noreferrer" class="btn-primary">Přejít na info.zcu.cz</a>
+			</div>
+		</section>
+
+		<div class="divider"></div>
+
+		<section class="home-section">
+			<div class="experts-cta">
+				<div>
+					<h2>Databáze odborníků</h2>
+					<p>Najdi lidi z praxe, kteří mohou pomoct s inspirací, networkingem nebo odborným pohledem.</p>
+				</div>
+				<a n:href="Expert:default" class="btn-primary">Zobrazit odborníky</a>
+			</div>
+		</section>
+
+		<div class="divider"></div>
+
+		<section class="home-section">
+			<div class="experts-cta">
+				<div>
+					<h2>Reporty z akcí</h2>
+					<p>Projdi si výstupy z proběhlých akcí, inspiruj se tématy a navazuj na to, co se v komunitě už odehrálo.</p>
+				</div>
+				<a n:href="Reports:default" class="btn-primary">Zobrazit reporty</a>
+			</div>
+		</section>
+	</div>
+{/block}

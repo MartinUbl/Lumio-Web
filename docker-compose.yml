@@ -1,0 +1,50 @@
+x-common-env: &common-env
+  MYSQL_ROOT_PASSWORD: LumioZSWE2026
+  MYSQL_DATABASE: lumio_db
+  MARIADB_HOST: mysql
+  MARIADB_DATABASE: lumio_db
+  MARIADB_USER: root
+  MARIADB_PORT: 3308
+  MARIADB_PASSWORD: LumioZSWE2026
+  DISCORD_BOT_PORT: 4321
+
+services:
+  app:
+    build:
+      context: ./
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www
+      - /var/www/vendor/
+    environment:
+      <<: *common-env
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0.45-debian
+    ports:
+      - "3308:3308"
+    expose:
+      - 3308
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE
+    environment:
+      <<: *common-env
+      MYSQL_TCP_PORT: 3308
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+# Not using bot locally by default
+#  bot:
+#    image: node:25-alpine3.22
+#    volumes:
+#      - ./discord_bot:/home/node/bot
+#    working_dir: /home/node/bot
+#    command: sh -c "npm i && npm start"
+#    environment:
+#      <<: *common-env
+#      DISCORD_BOT_TOKEN: PLACEHOLDER
+#    restart: unless-stopped
+#

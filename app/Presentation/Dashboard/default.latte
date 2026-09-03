@@ -1,0 +1,42 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Administrace'}
+
+{block content}
+    <div class="content" style="padding-top:40px;">
+        <div class="section-label">Administrace</div>
+        <h2 class="section-title">Správa webu</h2>
+
+        <div class="activities-grid">
+            <article class="activity-card">
+                <h3>Správa akcí</h3>
+                <p>Schvalování návrhů, úpravy obsahu akcí, příloh a připnutých odborníků.</p>
+                <a n:href="AdminEvents:default" class="btn-secondary">Spravovat akce</a>
+            </article>
+
+            <article class="activity-card">
+                <h3>Správa uživatelů</h3>
+                <p>Přehled registrovaných uživatelů, blokování a opětovné odblokování přístupu.</p>
+                <a n:href="AdminUsers:default" class="btn-secondary">Spravovat uživatele</a>
+            </article>
+
+            <article class="activity-card">
+                <h3>Správa odborníků</h3>
+                <p>Přidávání, úpravy a mazání odborníků v databázi odborníků.</p>
+                <a n:href="AdminExperts:default" class="btn-secondary">Spravovat odborníky</a>
+            </article>
+
+            <article class="activity-card">
+                <h3>Správa tagů</h3>
+                <p>Správa oborů a kategorií pro akce a oborů pro databázi odborníků.</p>
+                <a n:href="AdminTags:default" class="btn-secondary">Spravovat tagy</a>
+            </article>
+
+            <article class="activity-card">
+                <h3>Reporty z akcí</h3>
+                <p>Nahrávání a správa reportů z proběhlých akcí.</p>
+                <a n:href="AdminReports:default" class="btn-secondary">Spravovat reporty</a>
+            </article>
+        </div>
+    </div>
+{/block}

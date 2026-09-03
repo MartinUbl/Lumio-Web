@@ -1,0 +1,29 @@
+# https://kubernetes.io/docs/concepts/services-networking/ingress/
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lumio-web-app
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    # domena musi byt zaregistrovana v DNS
+    - lumio.zcu.cz
+    secretName: lumio-tls
+  defaultBackend:
+    service:
+      name: lumio-web-app
+      port:
+        number: 80
+  rules:
+  - host: lumio.zcu.cz
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: lumio-web-app
+            port:
+              number: 80

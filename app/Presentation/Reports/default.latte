@@ -1,0 +1,79 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Reporty'}
+
+{block content}
+	<div class="content" style="padding-top:40px;">
+		<div class="section-label">Archiv</div>
+		<h2 class="section-title">Reporty z akcí</h2>
+		<p class="form-notice" style="max-width:780px; margin-bottom:28px;">
+			Na jednom místě najdeš reporty z proběhlých akcí Lumio. Každý report může obsahovat text, PDF i galerii obrázků.
+		</p>
+
+		{if $reports}
+			<div class="reports-grid report-rich-grid">
+				{foreach $reports as $reportItem}
+					{var $event = $reportItem['event']}
+					{var $report = $reportItem['report']}
+					<article class="report-card report-rich-card">
+						<h3>{$event->name}</h3>
+						<div class="report-card-date">
+							{if $event->date}
+								{$event->date|date:'j.'} {$event->date|czechMonth} {$event->date|date:'Y'}
+							{else}
+								Datum nebylo doplněno
+							{/if}
+						</div>
+						<div class="event-card-tags" style="margin-top:12px;">
+							<span class="event-tag tag-flat">{$event->organiser}</span>
+							{foreach $event->getPublicDisplayTags() as $tag}
+								<span class="event-tag tag-{$tag['type']}">{$tag['label']}</span>
+							{/foreach}
+						</div>
+
+						{if $report->text !== ''}
+							<div class="report-content-block">
+								<p class="report-text">{$report->text}</p>
+							</div>
+						{/if}
+
+						{if $report->getPdfRelativePath()}
+							<div class="report-content-block">
+								<iframe
+									src="{$basePath}/uploads/{$report->getPdfRelativePath()}"
+									title="PDF report k akci {$event->name}"
+									class="report-pdf-frame"
+								></iframe>
+								<div class="report-inline-actions">
+									<a href="{$basePath}/uploads/{$report->getPdfRelativePath()}" target="_blank" rel="noreferrer" class="btn-secondary">Stáhnout PDF</a>
+								</div>
+							</div>
+						{/if}
+
+						{if $report->imageEntries !== []}
+							<div class="report-content-block">
+								{var $imagePaths = $report->getImageRelativePaths()}
+								<div class="report-gallery-grid">
+									{foreach $imagePaths as $imagePath}
+										<a href="{$basePath}/uploads/{$imagePath}" target="_blank" rel="noreferrer" class="report-gallery-item">
+											<img src="{$basePath}/uploads/{$imagePath}" alt="Obrázek reportu {$event->name}">
+										</a>
+									{/foreach}
+								</div>
+							</div>
+						{/if}
+
+						<div class="report-inline-actions">
+							<a n:href="Event:detail $event->id" class="btn-secondary">Detail akce</a>
+						</div>
+					</article>
+				{/foreach}
+			</div>
+		{else}
+			<div class="empty-state">
+				<h3>Zatím tu nejsou žádné reporty</h3>
+				<p>Jakmile správce nahraje první report z proběhlé akce, objeví se právě tady.</p>
+			</div>
+		{/if}
+	</div>
+{/block}

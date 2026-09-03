@@ -1,0 +1,15 @@
+# IDE
+.idea/*
+
+# Website related 
+temp/cache/*
+vendor/*
+composer.lock
+www/uploads/*
+
+# Database files
+mysql_data/*
+
+# Discord bot
+discord_bot/package-lock.json
+discord_bot/node_modules/*

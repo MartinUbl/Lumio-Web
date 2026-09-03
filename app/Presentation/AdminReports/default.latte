@@ -1,0 +1,174 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Správa reportů'}
+
+{block content}
+	<div class="content" style="padding-top:40px;">
+		<a n:href="Dashboard:default" style="display:inline-flex; gap:6px; margin-bottom:32px;">&larr; Zpět na dashboard</a>
+
+		<div class="section-label">Administrace</div>
+		<h2 class="section-title">Správa reportů</h2>
+		<p class="form-notice" style="max-width:760px; margin-bottom:24px;">
+			Vyber proběhlou schválenou akci a doplň k ní text reportu, PDF nebo galerii obrázků. Každý soubor může mít maximálně 10 MB.
+		</p>
+
+		<div class="admin-filter-stack">
+			<div class="admin-filter-label">Filtrovat akce podle měsíce a názvu.</div>
+			<div class="filter-chip-row" style="margin-bottom:4px;">
+				{foreach $monthFilters as $monthValue => $monthLabel}
+					<button
+						type="button"
+						class="filter-chip"
+						data-month-chip="1"
+						data-month="{$monthValue}"
+						onclick="toggleAdminReportsMonth(this)"
+					>{$monthLabel}</button>
+				{/foreach}
+			</div>
+			<div class="admin-filter-grid admin-filter-grid-single">
+				<div class="form-group" style="margin-bottom:0;">
+					<input
+						type="search"
+						id="admin-reports-name"
+						placeholder="Hledat podle názvu akce"
+						oninput="filterAdminReports()"
+					>
+				</div>
+			</div>
+
+			<div class="admin-filter-actions">
+				<button type="button" class="filter-reset" id="admin-reports-reset" onclick="resetAdminReportsFilters()" style="display:none;">× Zrušit filtr</button>
+			</div>
+		</div>
+
+		{if $selectedEvent}
+			<h3 class="section-title" style="font-size:28px; margin-bottom:14px;">Report k akci: {$selectedEvent->name}</h3>
+			<p class="form-notice" style="margin-bottom:20px;">
+				Datum akce: {if $selectedEvent->date}{$selectedEvent->date|date:'j. n. Y H:i'}{/if}
+			</p>
+
+			{if $selectedReport && $selectedReport->hasContent()}
+				<div class="form-card" style="margin-bottom:24px;">
+					<h3 style="margin-bottom:18px;">Aktuální obsah reportu</h3>
+
+					{if $selectedReport->text !== ''}
+						<div class="report-content-block">
+							<h4>Text reportu</h4>
+							<p class="report-text">{$selectedReport->text}</p>
+						</div>
+					{/if}
+
+					{if $selectedReport->getPdfRelativePath()}
+						<div class="report-content-block">
+							<h4>PDF report</h4>
+							<iframe
+								src="{$basePath}/uploads/{$selectedReport->getPdfRelativePath()}"
+								title="PDF report k akci {$selectedEvent->name}"
+								class="report-pdf-frame"
+							></iframe>
+							<div class="report-inline-actions">
+								<a href="{$basePath}/uploads/{$selectedReport->getPdfRelativePath()}" target="_blank" rel="noreferrer" class="btn-secondary">Stáhnout PDF</a>
+								<form method="post" action="{link deletePdf! $selectedEvent->id}" onsubmit="return confirm('Opravdu odebrat PDF report?')">
+									<input type="hidden" name="_token" value="{$adminActionToken}">
+									<button type="submit" class="btn-secondary">Odebrat PDF</button>
+								</form>
+							</div>
+						</div>
+					{/if}
+
+					{if $selectedReport->imageEntries !== []}
+						{var $imagePaths = $selectedReport->getImageRelativePaths()}
+						<div class="report-content-block">
+							<h4>Obrázky</h4>
+							<div class="report-gallery-grid">
+								{foreach $selectedReport->imageEntries as $index => $imageEntry}
+									<div class="report-gallery-item">
+										<img src="{$basePath}/uploads/{$imagePaths[$index]}" alt="Obrázek reportu {$selectedEvent->name}">
+										<div class="report-inline-actions report-inline-actions-tight">
+											<a href="{$basePath}/uploads/{$imagePaths[$index]}" target="_blank" rel="noreferrer" class="btn-secondary">Stáhnout</a>
+											<form method="post" action="{link deleteImage! $selectedEvent->id, image => $imageEntry}" onsubmit="return confirm('Opravdu odebrat tento obrázek?')">
+												<input type="hidden" name="_token" value="{$adminActionToken}">
+												<button type="submit" class="btn-secondary">Odebrat</button>
+											</form>
+										</div>
+									</div>
+								{/foreach}
+							</div>
+						</div>
+					{/if}
+				</div>
+			{/if}
+
+			<div class="form-card" style="margin-bottom:32px;">
+				<h3 style="margin-bottom:18px;">{if $selectedReport && $selectedReport->hasContent()}Upravit report{else}Přidat report{/if}</h3>
+				{form reportForm}
+					{if $form->hasErrors()}
+						<ul class="errors">
+							{foreach $form->errors as $error}
+								<li>{$error}</li>
+							{/foreach}
+						</ul>
+					{/if}
+
+					<input n:name="eventId">
+
+					<div class="form-group">
+						<label n:name="text">Popis reportu</label>
+						<textarea n:name="text"></textarea>
+					</div>
+
+					<div class="form-group">
+						<label n:name="pdf">PDF report</label>
+						<input n:name="pdf">
+						<div class="form-notice">Volitelné. Povolený je pouze PDF soubor do 10 MB.</div>
+					</div>
+
+					<div class="form-group">
+						<label n:name="images">Obrázky</label>
+						<input n:name="images">
+						<div class="form-notice">Volitelné. Můžeš nahrát až 10 obrázků celkem, každý maximálně 10 MB. Povolené jsou JPG, PNG a WEBP. Na počítači vyber více souborů najednou přes Ctrl nebo Shift.</div>
+					</div>
+
+					<div class="profile-form-actions">
+						<button n:name="send" class="btn-submit">Uložit report</button>
+					</div>
+				{/form}
+			</div>
+		{else}
+			<div class="empty-state" style="margin-bottom:32px;">
+				<span class="empty-state-icon">Report</span>
+				<h3>Vyber akci pro správu reportu</h3>
+				<p>Nejdřív si níže vyber proběhlou schválenou akci. Potom se nahoře otevře formulář pro text, PDF a obrázky reportu.</p>
+			</div>
+		{/if}
+
+		<div class="activities-grid" id="admin-reports-grid">
+			{foreach $events as $event}
+				{var $hasReport = $reportStates[$event->id] ?? false}
+				<article
+					class="activity-card report-event-card"
+					data-filter-card="1"
+					data-name="{$event->name}"
+					data-month="{$event->date?->format('m')}"
+				>
+					<div class="activity-card-top">
+						<span class="activity-type-badge">{if $hasReport}Má report{else}Bez reportu{/if}</span>
+						<span class="activity-year">{if $event->date}{$event->date|date:'j. n. Y'}{/if}</span>
+					</div>
+					<h3>{$event->name}</h3>
+					<p>
+						<span class="event-organiser-label">Organizátor:</span>
+						{$event->organiser}
+					</p>
+					<div class="profile-form-actions" style="justify-content:flex-start; margin-top:16px; padding-top:0; border-top:0;">
+						<a n:href="default, eventId => $event->id" class="btn-secondary">
+							{if $hasReport}Upravit report{else}Vybrat akci{/if}
+						</a>
+					</div>
+				</article>
+			{/foreach}
+		</div>
+
+		<div class="experts-empty" id="admin-reports-empty" style="display:none;">Žádná proběhlá akce neodpovídá zvolenému filtru.</div>
+	</div>
+{/block}

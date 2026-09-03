@@ -1,0 +1,68 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = 'Správa odborníků'}
+
+{block content}
+	<div class="content" style="padding-top:40px;">
+		<a n:href="Dashboard:default" style="display:inline-flex; gap:6px; margin-bottom:32px;">&larr; Zpět na dashboard</a>
+
+		<div class="section-label">Administrace</div>
+		<h2 class="section-title">Správa odborníků</h2>
+
+		<div class="profile-form-actions" style="justify-content:flex-start; margin-top:0; padding-top:0; border-top:0; margin-bottom:24px;">
+			<a n:href="edit" class="btn-primary">Přidat odborníka</a>
+		</div>
+
+		<div class="admin-filter-stack">
+			<div class="admin-filter-label">Filtrovat odborníky</div>
+			<div class="admin-filter-grid admin-filter-grid-single">
+				<div class="form-group" style="margin-bottom:0;">
+					<label for="admin-experts-name">Jméno</label>
+					<input
+						type="search"
+						id="admin-experts-name"
+						placeholder="Hledat podle jména"
+						oninput="filterAdminExperts()"
+					>
+				</div>
+			</div>
+
+			<div class="admin-filter-actions">
+				<button type="button" class="filter-reset" id="admin-experts-reset" onclick="resetAdminExpertsFilters()" style="display:none;">× Zrušit filtr</button>
+			</div>
+		</div>
+
+		<div class="activities-grid" id="admin-experts-grid">
+			{foreach $experts as $expert}
+				<article class="activity-card expert-admin-card" data-filter-card="1" data-name="{$expert->name}">
+					<div class="activity-card-top">
+						<span class="activity-type-badge">{if $expert->active}Odborník{else}Skrytý odborník{/if}</span>
+					</div>
+					<h3>{if $expert->degree !== ''}{$expert->degree . '. '}{/if}{$expert->name}</h3>
+					<p>{if $expert->institution}{$expert->institution}{else}Instituce zatím není doplněná.{/if}</p>
+					<div class="event-card-tags" style="margin-top:12px;">
+						{foreach $expert->tags as $tag}
+							<span class="event-tag tag-area">{$tag}</span>
+						{/foreach}
+					</div>
+					<div class="expert-admin-actions">
+						<a n:href="edit $expert->id" class="btn-secondary">Upravit</a>
+						{if $expert->active}
+							<form method="post" action="{link hide! $expert->id}" style="display:inline-block;" onsubmit="return confirm('Opravdu skrýt odborníka?')">
+								<input type="hidden" name="_token" value="{$adminActionToken}">
+								<button type="submit" class="btn-submit" >Skrýt</button>
+							</form>
+						{else}
+							<form method="post" action="{link show! $expert->id}" style="display:inline-block;">
+								<input type="hidden" name="_token" value="{$adminActionToken}">
+								<button type="submit" class="btn-submit" onclick="return confirm('Opravdu zobrazit odborníka?')">Zobrazit</button>
+							</form>
+						{/if}
+					</div>
+				</article>
+			{/foreach}
+		</div>
+
+		<div class="experts-empty" id="admin-experts-empty" style="display:none;">Žádný odborník neodpovídá zadanému jménu.</div>
+	</div>
+{/block}

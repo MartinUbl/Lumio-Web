@@ -1,0 +1,42 @@
+{
+    "1": {
+        "id": 1,
+        "name": "doc. Ing. Jan Novák, Ph.D.",
+        "institution": "ZČU FAV",
+        "address": null,
+        "email": "novak@fav.zcu.cz",
+        "phone": "+420 123 456 788",
+        "note": "Specializuje se na AI, datovou analytiku a spolupráci s průmyslem.",
+        "tags": [
+            "AI",
+            "Strojové učení",
+            "Datová analytika"
+        ]
+    },
+    "3": {
+        "id": 3,
+        "name": "Mgr. Jana Dvořáková",
+        "institution": "CIIRC",
+        "address": null,
+        "email": "dvorakova@ciirc.cvut.cz",
+        "phone": null,
+        "note": "Věnuje se robotice, výrobním technologiím a 3D tisku.",
+        "tags": [
+            "Robotika",
+            "3D tisk",
+            "Inovace"
+        ]
+    },
+    "4": {
+        "id": 4,
+        "name": "Martin Ubl",
+        "institution": "FAV ZČU",
+        "address": null,
+        "email": null,
+        "phone": null,
+        "note": null,
+        "tags": [
+            "Informatika"
+        ]
+    }
+}

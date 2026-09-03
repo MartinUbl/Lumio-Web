@@ -1,0 +1,65 @@
+{layout '../@layout.latte'}
+
+{var $pageTitle = isset($expert) && $expert ? 'Upravit odborníka' : 'Nový odborník'}
+
+{block content}
+	<div class="content" style="padding-top:40px;">
+		<a n:href="Dashboard:default" style="display:inline-flex; gap:6px; margin-bottom:12px;">&larr; Zpět na dashboard</a><br>
+		<a n:href="default" style="display:inline-flex; gap:6px; margin-bottom:32px;">&larr; Zpět na správu odborníků</a>
+
+		<div class="section-label">Administrace</div>
+		<h2 class="section-title">{if isset($expert) && $expert}Upravit odborníka{else}Přidat odborníka{/if}</h2>
+
+		{form expertForm, class => 'form-card'}
+			<ul n:ifcontent class="errors">
+				<li n:foreach="$form->getErrors() as $error">{$error}</li>
+			</ul>
+
+			{input id}
+
+			<div class="form-row">
+				<div class="form-group">
+					<label n:name="name">Jméno a titul</label>
+					<input n:name="name">
+				</div>
+				<div class="form-group">
+					<label n:name="institution">Instituce</label>
+					<input n:name="institution">
+				</div>
+			</div>
+
+			<div class="form-row">
+				<div class="form-group">
+					<label n:name="email">E-mail</label>
+					<input n:name="email">
+				</div>
+				<div class="form-group">
+					<label n:name="phone">Telefon</label>
+					<input n:name="phone">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label n:name="address">Adresa</label>
+				<input n:name="address">
+			</div>
+
+			<div class="form-group">
+				<label n:name="tags">Obory</label>
+				<select n:name="tags"></select>
+			</div>
+
+			<div class="form-group">
+				<label n:name="note">Poznámka</label>
+				<textarea n:name="note"></textarea>
+			</div>
+
+			<p class="form-notice">Tip: podrž `Ctrl` nebo `Cmd`, pokud chceš vybrat více oborů najednou.</p>
+
+			<div class="profile-form-actions">
+				<a n:href="default" class="btn-secondary">Zrušit</a>
+				{input send, class => 'btn-submit'}
+			</div>
+		{/form}
+	</div>
+{/block}
