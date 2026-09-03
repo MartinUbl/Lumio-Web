@@ -37,11 +37,28 @@ final class MigrateToLumioSchemaV2 extends AbstractMigration
     private function ensureRoles(): void
     {
         if (!$this->hasTable('roles')) {
-            $this->table('roles', ['id' => false, 'primary_key' => ['code']])
-                ->addColumn('code', 'string', ['limit' => 32, 'null' => false])
-                ->addColumn('label', 'string', ['limit' => 64, 'null' => false])
-                ->create();
+            $this->execute(
+                "CREATE TABLE roles (
+                    code VARCHAR(32) NOT NULL,
+                    label VARCHAR(64) NOT NULL,
+                    PRIMARY KEY (code)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci"
+            );
+        } else {
+            if (!$this->columnExists('roles', 'code')) {
+                $this->execute('ALTER TABLE roles ADD code VARCHAR(32) NULL');
+            }
+            if (!$this->columnExists('roles', 'label')) {
+                $this->execute('ALTER TABLE roles ADD label VARCHAR(64) NULL');
+            }
         }
+
+        $this->execute('ALTER TABLE roles CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci');
+        $this->execute("DELETE FROM roles WHERE code IS NULL OR TRIM(code) = ''");
+        $this->execute("UPDATE roles SET label = code WHERE label IS NULL OR TRIM(label) = ''");
+        $this->execute('ALTER TABLE roles MODIFY code VARCHAR(32) NOT NULL');
+        $this->execute('ALTER TABLE roles MODIFY label VARCHAR(64) NOT NULL');
+        $this->ensureRolesPrimaryKey();
 
         $this->execute(
             "INSERT INTO roles (code, label) VALUES
@@ -61,6 +78,35 @@ final class MigrateToLumioSchemaV2 extends AbstractMigration
                 WHERE role IS NOT NULL AND TRIM(role) <> ''"
             );
         }
+    }
+
+    private function ensureRolesPrimaryKey(): void
+    {
+        if ($this->indexExists('roles', 'PRIMARY')) {
+            return;
+        }
+
+        $this->execute(
+            "CREATE TEMPORARY TABLE roles_deduplicated (
+                code VARCHAR(32) NOT NULL,
+                label VARCHAR(64) NOT NULL,
+                PRIMARY KEY (code)
+            ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci"
+        );
+        $this->execute(
+            "INSERT INTO roles_deduplicated (code, label)
+            SELECT code, MIN(label)
+            FROM roles
+            GROUP BY code"
+        );
+        $this->execute('DELETE FROM roles');
+        $this->execute(
+            "INSERT INTO roles (code, label)
+            SELECT code, label
+            FROM roles_deduplicated"
+        );
+        $this->execute('DROP TEMPORARY TABLE roles_deduplicated');
+        $this->execute('ALTER TABLE roles ADD PRIMARY KEY (code)');
     }
 
     private function ensureUsers(): void
@@ -114,7 +160,7 @@ final class MigrateToLumioSchemaV2 extends AbstractMigration
         $this->deduplicateUserEmails();
 
         $this->execute("ALTER TABLE users MODIFY name VARCHAR(45) NOT NULL");
-        $this->execute("ALTER TABLE users MODIFY role VARCHAR(32) NOT NULL");
+        $this->execute("ALTER TABLE users MODIFY role VARCHAR(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci NOT NULL");
         $this->execute("ALTER TABLE users MODIFY faculty ENUM('FAV', 'FDU', 'FEK', 'FEL', 'FF', 'FPE', 'FPR', 'FST', 'FZS') NULL");
         $this->execute("ALTER TABLE users MODIFY active TINYINT(1) NOT NULL DEFAULT 1");
         $this->execute("ALTER TABLE users MODIFY password VARCHAR(256) NOT NULL");
