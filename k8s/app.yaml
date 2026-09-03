@@ -15,8 +15,6 @@ spec:
       labels:
         app: lumio-web-app
     spec:
-      imagePullSecrets:
-        - name: github-container-registry
       containers:
       - name: application
         image: ghcr.io/martinubl/lumio-web:latest
