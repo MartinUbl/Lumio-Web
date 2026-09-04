@@ -2,6 +2,7 @@
 resources:
   - app.yaml
   - database.yaml
+  - discord-bot.yaml
   - services.yaml
   - ingress.yaml
 
@@ -9,6 +10,8 @@ secretGenerator:
   - name: database
     envs:
       - database.env
-  - name: discord
+
+configMapGenerator:
+  - name: discord-bot-config
     envs:
       - discord.env

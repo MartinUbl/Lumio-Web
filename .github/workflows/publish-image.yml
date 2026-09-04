@@ -7,7 +7,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: martinubl/lumio-web
+  WEB_IMAGE_NAME: martinubl/lumio-web
+  DISCORD_BOT_IMAGE_NAME: martinubl/lumio-discord-bot
 
 jobs:
   build-and-push:
@@ -28,9 +29,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push image
+      - name: Build and push web image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: ghcr.io/martinubl/lumio-web:latest
+          tags: ${{ env.REGISTRY }}/${{ env.WEB_IMAGE_NAME }}:latest
+
+      - name: Build and push Discord bot image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./discord_bot
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.DISCORD_BOT_IMAGE_NAME }}:latest

@@ -2,6 +2,20 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: bot
+spec:
+  selector:
+    app: lumio-discord-bot
+  type: ClusterIP
+  ports:
+  - port: 4321
+    protocol: TCP
+    targetPort: http
+    name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: lumio-web-app
 spec:
   selector:

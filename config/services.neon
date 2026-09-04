@@ -13,7 +13,7 @@ services:
     - App\Presentation\Event\EventPresenter(uploadDir: %uploadDir%)
     - App\Presentation\AdminEvents\AdminEventsPresenter(uploadDir: %uploadDir%)
 
-    - App\Presentation\Accessory\DiscordIntegration(port: %env.DISCORD_BOT_PORT%)
+    - App\Presentation\Accessory\DiscordIntegration(baseUrl: %env.DISCORD_BOT_URL%)
 
 
 search:

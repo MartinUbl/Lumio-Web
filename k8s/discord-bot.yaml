@@ -1,0 +1,40 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lumio-discord-bot
+  labels:
+    app: lumio-discord-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lumio-discord-bot
+  template:
+    metadata:
+      labels:
+        app: lumio-discord-bot
+    spec:
+      containers:
+      - name: discord-bot
+        image: ghcr.io/martinubl/lumio-discord-bot:latest
+        ports:
+        - containerPort: 4321
+          name: http
+        envFrom:
+          - configMapRef:
+              name: discord-bot-config
+          - secretRef:
+              name: discord-bot
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 20
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10

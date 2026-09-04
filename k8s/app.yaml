@@ -20,8 +20,9 @@ spec:
         image: ghcr.io/martinubl/lumio-web:latest
         ports:
         - containerPort: 80
+        env:
+          - name: DISCORD_BOT_URL
+            value: http://bot:4321
         envFrom:
           - secretRef:
               name: database
-          - secretRef:
-              name: discord
