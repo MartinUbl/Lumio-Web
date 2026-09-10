@@ -27,6 +27,10 @@
     padding: 0;
 }
 
+a.accent {
+    color: var(--accent-hover);
+}
+
 html {
     scroll-behavior: smooth;
 }
@@ -650,6 +654,10 @@ nav {
     font-size: 14px;
     color: var(--ink-muted);
     max-width: 480px;
+}
+
+.experts-cta p.wide {
+    max-width: 100%;
 }
 
 .home-actions {
