@@ -89,7 +89,10 @@ final class AdminEventsPresenter extends BaseAdminPresenter
         $event = $this->eventApplicationService->setStatus($id, Event::STATUS_APPROVED);
         if ($event !== null) {
             $this->flashMessage('Akce byla schválena.', 'success');
-            $this->discord->postEventNotification($event);
+
+            if ($event->date !== null && $event->date > new \DateTimeImmutable()) {
+                $this->discord->postEventNotification($event);
+            }
         }
 
         $this->redirect('this');
