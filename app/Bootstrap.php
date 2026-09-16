@@ -32,7 +32,7 @@ class Bootstrap
         $this->configurator->setTimeZone('Europe/Prague');
 
 		//$this->configurator->setDebugMode('secret@23.75.345.200'); // enable for your remote IP
-        $this->configurator->setDebugMode(true); // TODO: Remove this for production.
+        //$this->configurator->setDebugMode(true); // TODO: Remove this for production.
 		$this->configurator->enableTracy($this->rootDir . '/log');
 
 		$this->configurator->createRobotLoader()
