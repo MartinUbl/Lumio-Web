@@ -2,6 +2,7 @@ FROM php:8.5-apache-trixie
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/www
 COPY . /var/www
+COPY docker/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 WORKDIR /var/www
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
         /etc/apache2/sites-available/*.conf \

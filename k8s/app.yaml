@@ -15,6 +15,13 @@ spec:
       labels:
         app: lumio-web-app
     spec:
+      initContainers:
+      - name: prepare-app-data
+        image: busybox:1.36
+        command: ["sh", "-c", "mkdir -p /data/uploads /data/log && chown -R 33:33 /data/uploads /data/log"]
+        volumeMounts:
+        - name: app-data
+          mountPath: /data
       containers:
       - name: application
         image: ghcr.io/martinubl/lumio-web:latest
@@ -26,3 +33,14 @@ spec:
         envFrom:
           - secretRef:
               name: database
+        volumeMounts:
+        - name: app-data
+          mountPath: /var/www/www/uploads
+          subPath: uploads
+        - name: app-data
+          mountPath: /var/www/log
+          subPath: log
+      volumes:
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: app-data

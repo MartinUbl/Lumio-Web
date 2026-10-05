@@ -3,6 +3,7 @@ resources:
   - app.yaml
   - database.yaml
   - discord-bot.yaml
+  - pvc.yaml
   - services.yaml
   - ingress.yaml
 
