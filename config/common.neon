@@ -1,7 +1,7 @@
 # see https://doc.nette.org/en/configuring
 
 parameters:
-	wwwDir: %rootDir%/../www
+	wwwDir: %rootDir%/www
 	uploadDir: %wwwDir%/uploads
 
 
