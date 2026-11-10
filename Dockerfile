@@ -1,4 +1,4 @@
-FROM php:8.5-apache-trixie
+FROM php:8.5.12-apache-trixie
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/www
 COPY . /var/www
